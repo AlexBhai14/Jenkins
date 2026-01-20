@@ -3,31 +3,40 @@ pipeline {
 
     tools {
         jdk 'JDK8'
+        maven 'Maven3'
     }
 
     stages {
 
-        stage('Compile') {
+        stage('Build') {
             steps {
-                echo 'Compiling Java program'
-                bat 'javac src\\com\\tyit\\HelloJenkins.java'
+                echo 'Building application'
+                bat 'mvn clean compile'
             }
         }
 
-        stage('Run') {
+        stage('Test') {
             steps {
-                echo 'Running Java program'
-                bat 'java -cp src com.tyit.HelloJenkins'
+                echo 'Running JUnit tests'
+                bat 'mvn test'
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                echo 'Deploying application'
+                bat 'mkdir C:\\deploy'
+                bat 'copy target\\HelloJenkins-1.0.jar C:\\deploy'
             }
         }
     }
 
     post {
         success {
-            echo 'Java build executed successfully in Jenkins'
+            echo 'Build, Test and Deployment completed successfully'
         }
         failure {
-            echo 'Java build failed'
+            echo 'Build/Test failed – Deployment skipped'
         }
     }
 }
